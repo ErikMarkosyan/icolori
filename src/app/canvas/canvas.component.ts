@@ -39,7 +39,12 @@ export class CanvasComponent implements OnInit {
   }
 
   onCircleClick(circle: ICircle): void {
+    if(circle.color !== this.currentColor){
     this.circles[circle.id].color = this.currentColor;
+    }
+    else{
+    this.circles[circle.id].color = 'white';
+    }
   }
 
   onResetColor(): void {
@@ -83,8 +88,10 @@ export class CanvasComponent implements OnInit {
     this.projectList.push({
       id: this.newId(),
       name: this.projectName,
+      circleSize: this.selectedSize,
       circles: this.circles,
     })
+    this.projectName = '';
     const projectsStr = JSON.stringify(this.projectList);
     this.storage.set(this.projectListName, projectsStr);
   }
@@ -98,5 +105,16 @@ export class CanvasComponent implements OnInit {
 
   selectProject(project: IProject): void {
     this.circles = project.circles;
+    this.selectedSize = project.circleSize;
+  }
+
+  removeSaved(project: IProject){
+    const storage = this.projectList.filter((item) => {
+      return item.id !== project.id;
+    });
+
+    this.projectList = storage;
+    const projectsStr = JSON.stringify(this.projectList);
+    this.storage.set(this.projectListName, projectsStr);
   }
 }
