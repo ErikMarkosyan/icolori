@@ -70,7 +70,7 @@
   height: 30px;
   border: 1px solid #000000;
   margin-left: 10px;
-  border-radius: 30px;
+  border-radius: 30px; 
   cursor: pointer;
 }
 
@@ -204,4 +204,31 @@ input {
   padding: 20px;
   margin: 13px;
   cursor: wait;
+}
+
+.element {
+  width: 100%;
+  height: 100%;
+  animation: pulse 10s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #000000;
+  }
+
+  25% {
+    background-color: rgb(94, 94, 94);
+  }
+  100% {
+    background-color: #ffffff;
+  }
+}
+
+
+
+html,
+body {
+  margin: auto;
+  height: 100%;
 }

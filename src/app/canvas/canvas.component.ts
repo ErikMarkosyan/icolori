@@ -1,13 +1,17 @@
-import {Component, OnInit} from '@angular/core';
-import {ICircle} from "../interfaces/circle.interface";
-import {ECircleCount} from "../enums/circle-count.enum";
-import {LocalStorageService} from "../services/storage.service";
-import {IProject} from "../interfaces/project.interface";
+import { Component, OnInit } from '@angular/core';
+import { ICircle } from '../interfaces/circle.interface';
+import { ECircleCount } from '../enums/circle-count.enum';
+import { LocalStorageService } from '../services/storage.service';
+import { IProject } from '../interfaces/project.interface';
+import { CirclesComponent } from '../circles/circles.component';
+import { ProjectComponent } from '../project/project.component';
+import { CircleComponent } from '../circle/circle.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
-  styleUrls: ['./canvas.component.css']
+  styleUrls: ['./canvas.component.css'],
 })
 export class CanvasComponent implements OnInit {
   circles: ICircle[] = [];
@@ -21,29 +25,30 @@ export class CanvasComponent implements OnInit {
   ];
   selectedSize: number = this.canvasSizes[0];
   currentColor: string = '#000';
+  currentUser!: string;
+  id!: string;
 
-  constructor(private storage: LocalStorageService) { }
+  constructor(private storage: LocalStorageService, private router: Router) {}
 
   ngOnInit(): void {
     this.getProjects();
-    console.log(this.projectList)
+    console.log(this.projectList);
   }
 
   onGenerateCircles(): void {
-    this.resetColors()
+    this.resetColors();
     console.log('this.circles: ', this.circles);
   }
 
   onSizeSelect(): void {
-    // this.circles = [];
+    this.circles = [];
   }
 
   onCircleClick(circle: ICircle): void {
-    if(circle.color !== this.currentColor){
-    this.circles[circle.id].color = this.currentColor;
-    }
-    else{
-    this.circles[circle.id].color = 'white';
+    if (circle.color !== this.currentColor) {
+      this.circles[circle.id].color = this.currentColor;
+    } else {
+      this.circles[circle.id].color = 'white';
     }
   }
 
@@ -56,11 +61,8 @@ export class CanvasComponent implements OnInit {
   resetColors(): void {
     this.circles = [];
     for (let i = 0; i < this.selectedSize; i++) {
-      this.circles.push({
-        id: i,
-        uid: this.newId(),
-        color: '',
-      });
+      const c = new CirclesComponent(i, this.newId(), '');
+      this.circles.push(c);
     }
   }
 
@@ -70,7 +72,7 @@ export class CanvasComponent implements OnInit {
     }
     this.circles.forEach((item) => {
       item.color = this.currentColor;
-    })
+    });
   }
 
   isEmpty(arr: ICircle[]): boolean {
@@ -81,23 +83,40 @@ export class CanvasComponent implements OnInit {
     return String(Date.now());
   }
 
-  onSave(): void {
-    if (this.isEmpty(this.circles) || !this.projectName) {
-      return;
-    }
-    this.projectList.push({
-      id: this.newId(),
-      name: this.projectName,
-      circleSize: this.selectedSize,
-      circles: this.circles,
-    })
-    this.projectName = '';
+  setStorage() {
     const projectsStr = JSON.stringify(this.projectList);
     this.storage.set(this.projectListName, projectsStr);
   }
 
+  onSave(): void {
+    let indexKey;
+    const project = new ProjectComponent(
+      this.currentUser,
+      this.newId(),
+      this.projectName,
+      this.circles
+    );
+    if (this.isEmpty(this.circles) || !this.projectName) {
+      return;
+    }
+    this.projectList.push(project);
+    this.projectName = '';
+    const projectsStr = JSON.stringify(this.projectList);
+    this.storage.set(this.projectListName, projectsStr);
+    this.projectList.splice(indexKey || this.projectList.length, 0, project);
+    this.setStorage();
+    this.projectName = '';
+    this.circles = [];
+  }
+
   getProjects(): void {
+    const currentUserStr = this.storage.get('loggedInUser');
     const projects = this.storage.get(this.projectListName);
+    if (currentUserStr) {
+      this.currentUser = currentUserStr;
+    } else {
+     
+    }
     if (projects) {
       this.projectList = JSON.parse(projects);
     }
@@ -105,10 +124,18 @@ export class CanvasComponent implements OnInit {
 
   selectProject(project: IProject): void {
     this.circles = project.circles;
-    this.selectedSize = project.circleSize;
+    this.projectName = project.name;
+    
+    this.id = project.id;
+    if (project.circles.length === 100) {
+      this.selectedSize = this.canvasSizes[0];
+    } else if (project.circles.length === 225) {
+      this.selectedSize = this.canvasSizes[1];
+    } else {
+      this.selectedSize = this.canvasSizes[2];
+    }
   }
-
-  removeSaved(project: IProject){
+  removeSaved(project: IProject) {
     const storage = this.projectList.filter((item) => {
       return item.id !== project.id;
     });

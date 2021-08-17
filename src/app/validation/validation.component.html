@@ -1,0 +1,18 @@
+<div class="field">
+  <label class="label" >{{ label }}</label>
+  <div class="control">
+    <input [formControl]='control' [type]="inputType"
+           [ngClass]="{ 'is-danger': errorMassages() }"/>
+    <ng-container *ngIf="errorMassages()">
+      <div class="help is-danger" *ngIf="control?.errors?.required">
+        Value is required.
+      </div>
+      <div class="help is-danger" *ngIf="control?.errors?.minlength">
+        Value you entered is short
+      </div>
+      <div class="help is-danger" *ngIf="control?.errors?.pattern">
+        Invalid format
+      </div>
+    </ng-container>
+  </div>
+</div>

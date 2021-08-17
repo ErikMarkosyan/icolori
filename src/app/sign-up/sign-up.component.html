@@ -1,0 +1,21 @@
+<form class="login-page" [formGroup]="$any(form)" >
+  <div class="container">
+    <div class="inputs">
+      <div class="name">
+        <input type="name" [formControl]="$any(form).controls['name']"  placeholder="name"/>
+      </div>
+      <div type="email">
+        <input [formControl]="$any(form).controls['email']"  type="email" class="email" placeholder="@email"/>
+      </div>
+      <div class="password">
+        <input [formControl]="$any(form).controls['password']" type="password" class="password" placeholder="password"/>
+      </div>
+      <div class="password">
+        <input [formControl]="$any(form).controls['password']" type="password" class="password" placeholder="confirm password"/>
+      </div>
+    </div>
+  </div>
+  <div class="button">
+    <button class="login" routerLink='' (click)="register()">Register</button>
+  </div>
+</form>

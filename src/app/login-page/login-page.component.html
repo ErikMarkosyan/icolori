@@ -1,0 +1,12 @@
+<form [formGroup]="form">
+  <div type="email">
+    <input type="email" class="email" placeholder="@email" [formControl]="$any(form).controls['email']"/>
+  </div>
+  <div class="password">
+    <input type="password" class="password" placeholder="password" [formControl]="$any(form).controls['password']"/>
+  </div>
+  <div class="buttons">
+    <button class="login" type="submit"  (click)="onLogIn()">Log In</button>
+    <button  class="signup" (click)="onSignUp()">Sign Up</button>
+  </div>
+</form>

@@ -1,8 +1,8 @@
-import {ICircle} from "./circle.interface";
+import { ICircle } from './circle.interface';
 
 export interface IProject {
+  user: string;
   id: string;
   name: string;
-  circleSize:number;
   circles: ICircle[];
 }

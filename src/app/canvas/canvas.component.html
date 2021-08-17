@@ -15,13 +15,7 @@
             (click)="onGenerateCircles()">
       Generate
     </button>
-    <div class="picker-wrapper">
-      <div class="picker-inner"
-           [style.background-color]="currentColor"></div>
-      <input class="picker" type="color"
-            placeholder="Save pic"
-             [(ngModel)]="currentColor" />
-    </div>
+ 
     <button class="button-reset"
             (click)="onResetColor()">Reset</button>
     <button class="button-fill-all"
